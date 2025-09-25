@@ -39,6 +39,13 @@ func NewGradeCalculator() *GradeCalculator {
 func (gc *GradeCalculator) GetFinalGrade() string {
 	numericalGrade := gc.calculateNumericalGrade()
 
+	if gc.scheme == "pass/fail" {
+		if numericalGrade >= 60 {
+			return "Pass"
+		}
+		return "Fail"
+	}
+
 	if numericalGrade >= 90 {
 		return "A"
 	} else if numericalGrade >= 80 {
