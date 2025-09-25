@@ -1,9 +1,8 @@
 package esepunittests
 
 type GradeCalculator struct {
-	assignments []Grade
-	exams       []Grade
-	essays      []Grade
+	grades []Grade
+
 }
 
 type GradeType int
@@ -32,9 +31,7 @@ type Grade struct {
 
 func NewGradeCalculator() *GradeCalculator {
 	return &GradeCalculator{
-		assignments: make([]Grade, 0),
-		exams:       make([]Grade, 0),
-		essays:      make([]Grade, 0),
+		grades: make([]Grade, 0),
 	}
 }
 
@@ -55,44 +52,46 @@ func (gc *GradeCalculator) GetFinalGrade() string {
 }
 
 func (gc *GradeCalculator) AddGrade(name string, grade int, gradeType GradeType) {
-	switch gradeType {
-	case Assignment:
-		gc.assignments = append(gc.assignments, Grade{
-			Name:  name,
-			Grade: grade,
-			Type:  Assignment,
-		})
-	case Exam:
-		gc.exams = append(gc.exams, Grade{
-			Name:  name,
-			Grade: grade,
-			Type:  Exam,
-		})
-	case Essay:
-		gc.essays = append(gc.essays, Grade{
-			Name:  name,
-			Grade: grade,
-			Type:  Essay,
-		})
-	}
+	gc.grades = append(gc.grades, Grade{
+		Name:  name,
+		Grade: grade,
+		Type:  gradeType,
+	})
 }
 
 func (gc *GradeCalculator) calculateNumericalGrade() int {
-	assignment_average := computeAverage(gc.assignments)
-	exam_average := computeAverage(gc.exams)
-	essay_average := computeAverage(gc.essays)
+	var assignmentSum, assignmentCount int
+	var examSum, examCount int
+	var essaySum, essayCount int
 
-	weighted_grade := float64(assignment_average)*.5 + float64(exam_average)*.35 + float64(essay_average)*.15
-
-	return int(weighted_grade)
-}
-
-func computeAverage(grades []Grade) int {
-	sum := 0
-
-	for _, g := range grades {
-		sum += g.Grade
+	for _, g := range gc.grades {
+		switch g.Type {
+		case Assignment:
+			assignmentSum += g.Grade
+			assignmentCount++
+		case Exam:
+			examSum += g.Grade
+			examCount++
+		case Essay:
+			essaySum += g.Grade
+			essayCount++
+		}
 	}
 
-	return sum / len(grades)
+	assignmentAvg := 0
+	if assignmentCount > 0 {
+		assignmentAvg = assignmentSum / assignmentCount
+	}
+	examAvg := 0
+	if examCount > 0 {
+		examAvg = examSum / examCount
+	}
+	essayAvg := 0
+	if essayCount > 0 {
+		essayAvg = essaySum / essayCount
+	}
+
+	weighted := float64(assignmentAvg)*0.5 + float64(examAvg)*0.35 + float64(essayAvg)*0.15
+	return int(weighted)
 }
+
