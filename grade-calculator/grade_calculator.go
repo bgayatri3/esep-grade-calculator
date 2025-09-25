@@ -2,7 +2,7 @@ package esepunittests
 
 type GradeCalculator struct {
 	grades []Grade
-
+	scheme string
 }
 
 type GradeType int
@@ -32,6 +32,7 @@ type Grade struct {
 func NewGradeCalculator() *GradeCalculator {
 	return &GradeCalculator{
 		grades: make([]Grade, 0),
+		scheme: "letter", // default scheme is to return letter grades
 	}
 }
 
